@@ -64,6 +64,7 @@ def show_info_window():
     Label(info_window, text="О программе: Простой калькулятор\n Игорь Земсков © 2025", font="Arial 8").pack(side="bottom", pady=5)
 root = Tk()
 root.title("Калькулятор")
+root.iconbitmap(default="calc.ico")
 root.geometry("320x550+600+150")
 root.configure(bg=BG_COLOR)
 root.bind("<Key>", key_event)
