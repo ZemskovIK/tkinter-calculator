@@ -26,14 +26,23 @@ def calculate():
     global X, Op
     try:
         Y = float(label["text"])
-        label["text"] = str(
-            {"+": X + Y, "-": X - Y, "*": X * Y, "/": X / Y if Y else "Error", "%": X * Y / 100}.get(Op, "Error")
-        )[:12]
-    except:
-        label["text"] = "Error"
-        
+        if Op == "/" and Y == 0:
+            raise ZeroDivisionError
+        result = {
+            "+": X + Y, "-": X - Y, "*": X * Y, "/": X / Y, "%": X * Y / 100
+        }.get(Op, "Error")
+        label["text"] = str(result)[:12]
+    except ZeroDivisionError:
+        label["text"] = "Ошибка"
+    except ValueError:
+        label["text"] = "Ошибка"
+
 def reciprocal():
-    label["text"] = str(1 / float(label["text"]))[:12] if float(label["text"]) != 0 else "Error"
+    try:
+        value = float(label["text"])
+        label["text"] = str(1 / value)[:12] if value != 0 else "Ошибка"
+    except (ValueError, ZeroDivisionError):
+        label["text"] = "Ошибка"
     
 def square():
     label["text"] = str(float(label["text"]) ** 2)[:12]
@@ -41,9 +50,9 @@ def square():
 def sqrt():
     try:
         value = float(label["text"])
-        label["text"] = str(value ** 0.5)[:12] if value >= 0 else "Error"
+        label["text"] = str(value ** 0.5)[:12] if value >= 0 else "Ошибка"
     except ValueError:
-        label["text"] = "Error"
+        label["text"] = "Ошибка"
         
 def negate():
     label["text"] = str(-float(label["text"]))[:12]
@@ -57,7 +66,9 @@ def key_event(event):
         calculate()
     elif event.keysym == "BackSpace":
         backspace()
-        
+    elif event.keysym == "Escape":
+        clear()
+
 def show_info_window():
     info_window = Toplevel(root)
     info_window.title("Информация")
@@ -85,6 +96,7 @@ root.bind("<Key>", key_event)
 label = Label(root, text="0", font=("Arial", 32), fg=TEXT_COLOR, bg=DISPLAY_BG,
               anchor="e", width=14, padx=10, pady=10)
 label.pack(pady=15, padx=10, ipadx=5, ipady=5)
+
 buttons = [
     ("←", backspace), ("C", clear), ("CE", clear), ("/", lambda: operation("/")),
     ("7", lambda: click(7)), ("8", lambda: click(8)), ("9", lambda: click(9)), ("*", lambda: operation("*")),
@@ -93,13 +105,21 @@ buttons = [
     ("±", negate), ("0", lambda: click(0)), (",", lambda: click(".")), ("=", calculate),
     ("1/x", reciprocal), ("x²", square), ("√", sqrt), ("%", lambda: operation("%"))
 ]
+
 frame = Frame(root, bg=BG_COLOR)
 frame.pack()
 
-def create_button(text, cmd, color=BTN_COLOR):
+def create_button(text, cmd, color=BTN_COLOR, row=0, col=0):
+    hover_color = BTN_HOVER if color == BTN_COLOR else "#FFB347"
+
     btn = Button(frame, text=text, font=("Arial", 14), width=6, height=2, fg=TEXT_COLOR, bg=color,
-                 activebackground=BTN_HOVER, activeforeground="white", relief="flat",
-                 command=cmd, bd=0)
+                 relief="flat", command=cmd, bd=0)
+
+    btn.grid(row=row, column=col, padx=3, pady=3)
+
+    btn.bind("<Enter>", lambda e: btn.config(bg=hover_color))
+    btn.bind("<Leave>", lambda e: btn.config(bg=color))
+
     return btn
 
 for i, (text, cmd) in enumerate(buttons):
