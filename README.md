@@ -22,5 +22,5 @@
    ```
 2. **Запустите скрипт**
    ```bash
-   python calculator.py
+   python main.py
    ```
