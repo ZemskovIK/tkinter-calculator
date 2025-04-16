@@ -17,7 +17,7 @@
 
 1. **Склонируйте репозиторий**  
    ```bash
-   git clone https://github.com/ZemskovIK/tkinter-calculator.git
+   git clone https://github.com/zemskovik/tkinter-calculator.git
    cd tkinter-calculator
    ```
 2. **Запустите скрипт**
