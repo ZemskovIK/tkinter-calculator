@@ -60,14 +60,23 @@ def negate():
 def key_event(event):
     if event.char.isdigit() or event.char == ".":
         click(event.char)
-    elif event.char in "+-*/":
-        operation(event.char)
+    elif event.keysym in {"plus", "minus", "asterisk", "slash", "percent"}:
+        op = {
+            "plus": "+",
+            "minus": "-",
+            "asterisk": "*",
+            "slash": "/",
+            "percent": "%"
+        }[event.keysym]
+        operation(op)
     elif event.keysym == "Return":
         calculate()
     elif event.keysym == "BackSpace":
         backspace()
     elif event.keysym == "Escape":
         clear()
+    elif event.keysym == "comma":
+        click(".")
 
 def show_info_window():
     info_window = Toplevel(root)
